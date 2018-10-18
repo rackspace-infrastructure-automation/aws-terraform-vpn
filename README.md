@@ -17,6 +17,8 @@ module "vpn1" {
  static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
  static_routes_count = 2
  vpc_id              = "${module.vpc.vpc_id}"
+ # preshared_keys   = ["WeeshaiYoo2phooC", "WeeshaiYoo2phooC"]
+ # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
 }
 ```
 
@@ -32,8 +34,12 @@ module "vpn1" {
  route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
  route_tables_count  = 3
  vpc_id              = "${module.vpc.vpc_id}"
+ # preshared_keys   = ["WeeshaiYoo2phooC", "WeeshaiYoo2phooC"]
+ # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
 }
 ```
+
+
 
 Full working references are available at [examples](examples)
 
@@ -61,6 +67,8 @@ Full working references are available at [examples](examples)
 | static_routes_count | The number of internal subnets on the customer side. | string | `0` | no |
 | tags | Custom tags to apply to all resources. | map | `<map>` | no |
 | vpc_id | Provide Virtual Private Cloud ID in which the VPN resources will be deployed | string | - | yes |
+| preshared_keys | Pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0). | list | [] | no
+| bgp_inside_cidrs | Range of inside IP addresses for the tunnel. Any specified CIDR blocks must be unique across all VPN connections that use the same virtual private gateway. A size /30 CIDR block from the 169.254.0.0/16 range. The following CIDR blocks are reserved and cannot be used: 169.254.0.0/30, 169.254.1.0/30, 169.254.2.0/30, 169.254.3.0/30, 169.254.4.0/30, 169.254.5.0/30, 169.254.169.252/30 | list | [] | no
 
 ## Outputs
 

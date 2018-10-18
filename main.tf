@@ -85,6 +85,7 @@ resource "aws_vpn_gateway" "vpn_gateway" {
 }
 
 resource "aws_vpn_connection" "vpn_connection" {
+  count               = "${length(var.preshared_keys) == 0 && length(var.bgp_inside_cidrs) == 0 ? 1 : 0}"
   customer_gateway_id = "${local.customer_gateway}"
   static_routes_only  = "${var.disable_bgp}"
   tags                = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
@@ -92,11 +93,46 @@ resource "aws_vpn_connection" "vpn_connection" {
   vpn_gateway_id      = "${local.vpn_gateway}"
 }
 
+resource "aws_vpn_connection" "vpn_connection_custom_presharedkey" {
+  count                 = "${length(var.preshared_keys) > 0 && length(var.bgp_inside_cidrs) == 0  ? 1 : 0}"
+  customer_gateway_id   = "${local.customer_gateway}"
+  static_routes_only    = "${var.disable_bgp}"
+  tags                  = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
+  type                  = "ipsec.1"
+  vpn_gateway_id        = "${local.vpn_gateway}"
+  tunnel1_preshared_key = "${element(var.preshared_keys,0)}"
+  tunnel2_preshared_key = "${element(var.preshared_keys,1)}"
+}
+
+resource "aws_vpn_connection" "vpn_connection_custom_inside_cidr" {
+  count               = "${length(var.preshared_keys) == 0 && length(var.bgp_inside_cidrs) > 0 ? 1 : 0}"
+  customer_gateway_id = "${local.customer_gateway}"
+  static_routes_only  = "${var.disable_bgp}"
+  tags                = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
+  type                = "ipsec.1"
+  vpn_gateway_id      = "${local.vpn_gateway}"
+  tunnel1_inside_cidr = "${element(var.bgp_inside_cidrs,0)}"
+  tunnel2_inside_cidr = "${element(var.bgp_inside_cidrs,1)}"
+}
+
+resource "aws_vpn_connection" "vpn_connection_custom_attributes" {
+  count                 = "${length(var.preshared_keys) > 0 && length(var.bgp_inside_cidrs) > 0 ? 1 : 0}"
+  customer_gateway_id   = "${local.customer_gateway}"
+  static_routes_only    = "${var.disable_bgp}"
+  tags                  = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
+  type                  = "ipsec.1"
+  vpn_gateway_id        = "${local.vpn_gateway}"
+  tunnel1_preshared_key = "${element(var.preshared_keys,0)}"
+  tunnel2_preshared_key = "${element(var.preshared_keys,1)}"
+  tunnel1_inside_cidr   = "${element(var.bgp_inside_cidrs,0)}"
+  tunnel2_inside_cidr   = "${element(var.bgp_inside_cidrs,1)}"
+}
+
 resource "aws_vpn_connection_route" "static_routes" {
   count = "${var.disable_bgp ? var.static_routes_count : 0}"
 
   destination_cidr_block = "${element(var.static_routes, count.index)}"
-  vpn_connection_id      = "${aws_vpn_connection.vpn_connection.id}"
+  vpn_connection_id      = "${element(concat(aws_vpn_connection.vpn_connection.*.id,aws_vpn_connection.vpn_connection_custom_presharedkey.*.id,aws_vpn_connection.vpn_connection_custom_inside_cidr.*.id,aws_vpn_connection.vpn_connection_custom_attributes.*.id, list("")), 0)}"
 }
 
 resource "aws_vpn_gateway_route_propagation" "route_propagation" {
@@ -119,6 +155,6 @@ resource "aws_cloudwatch_metric_alarm" "vpn_status" {
   threshold           = "0"
 
   dimensions {
-    VpnId = "${aws_vpn_connection.vpn_connection.id}"
+    VpnId = "${element(concat(aws_vpn_connection.vpn_connection.*.id,aws_vpn_connection.vpn_connection_custom_presharedkey.*.id,aws_vpn_connection.vpn_connection_custom_inside_cidr.*.id,aws_vpn_connection.vpn_connection_custom_attributes.*.id, list("")), 0)}"
   }
 }
