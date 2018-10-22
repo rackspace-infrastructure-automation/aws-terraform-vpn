@@ -85,7 +85,7 @@ resource "aws_vpn_gateway" "vpn_gateway" {
 }
 
 resource "aws_vpn_connection" "vpn_connection" {
-  count               = "${length(var.preshared_keys) == 0 && length(var.bgp_inside_cidrs) == 0 ? 1 : 0}"
+  count               = "${!var.use_preshared_keys && !var.use_bgp_inside_cidrs ? 1 : 0}"
   customer_gateway_id = "${local.customer_gateway}"
   static_routes_only  = "${var.disable_bgp}"
   tags                = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
@@ -94,7 +94,7 @@ resource "aws_vpn_connection" "vpn_connection" {
 }
 
 resource "aws_vpn_connection" "vpn_connection_custom_presharedkey" {
-  count                 = "${length(var.preshared_keys) > 0 && length(var.bgp_inside_cidrs) == 0  ? 1 : 0}"
+  count                 = "${var.use_preshared_keys && !var.use_bgp_inside_cidrs ? 1 : 0}"
   customer_gateway_id   = "${local.customer_gateway}"
   static_routes_only    = "${var.disable_bgp}"
   tags                  = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
@@ -105,7 +105,7 @@ resource "aws_vpn_connection" "vpn_connection_custom_presharedkey" {
 }
 
 resource "aws_vpn_connection" "vpn_connection_custom_inside_cidr" {
-  count               = "${length(var.preshared_keys) == 0 && length(var.bgp_inside_cidrs) > 0 ? 1 : 0}"
+  count               = "${!var.use_preshared_keys && var.use_bgp_inside_cidrs ? 1 : 0}"
   customer_gateway_id = "${local.customer_gateway}"
   static_routes_only  = "${var.disable_bgp}"
   tags                = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
@@ -116,7 +116,7 @@ resource "aws_vpn_connection" "vpn_connection_custom_inside_cidr" {
 }
 
 resource "aws_vpn_connection" "vpn_connection_custom_attributes" {
-  count                 = "${length(var.preshared_keys) > 0 && length(var.bgp_inside_cidrs) > 0 ? 1 : 0}"
+  count                 = "${var.use_preshared_keys && var.use_bgp_inside_cidrs ? 1 : 0}"
   customer_gateway_id   = "${local.customer_gateway}"
   static_routes_only    = "${var.disable_bgp}"
   tags                  = "${merge(map("Name", "${var.name}-VpnConnection"), var.tags, local.tags)}"
