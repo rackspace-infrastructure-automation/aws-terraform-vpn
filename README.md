@@ -17,6 +17,9 @@ module "vpn1" {
  static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
  static_routes_count = 2
  vpc_id              = "${module.vpc.vpc_id}"
+ # use_preshared_keys = true
+ # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+ 
 }
 ```
 
@@ -32,8 +35,14 @@ module "vpn1" {
  route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
  route_tables_count  = 3
  vpc_id              = "${module.vpc.vpc_id}"
+ # use_preshared_keys = true
+ # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+ # bgp_inside_cidrs = true
+ # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
 }
 ```
+
+
 
 Full working references are available at [examples](examples)
 
@@ -61,6 +70,10 @@ Full working references are available at [examples](examples)
 | static_routes_count | The number of internal subnets on the customer side. | string | `0` | no |
 | tags | Custom tags to apply to all resources. | map | `<map>` | no |
 | vpc_id | Provide Virtual Private Cloud ID in which the VPN resources will be deployed | string | - | yes |
+| use_preshared_keys | Boolean value to determine if presharedkeys should be used for the VPN tunnels. If custom presharedkeys are required for this VPN this value should be set to true. | string | false | no
+| preshared_keys | Pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0), #Always use **aws_kms_key** to manage sensitive information. Use it in conjunction with variable **preshared_keys**.  Example ["XXXX","XXXX"]  | list | [] | no
+| use_bgp_inside_cidrs | Boolean value to determine if BGP Inside CIDR addresses should be used for the VPN tunnels. If custom inside CIDRs are required for this VPN this value should be set to true. | string | false | no
+| bgp_inside_cidrs | Range of inside IP addresses for the tunnel. Any specified CIDR blocks must be unique across all VPN connections that use the same virtual private gateway. A size /30 CIDR block from the 169.254.0.0/16 range. The following CIDR blocks are reserved and cannot be used: 169.254.0.0/30, 169.254.1.0/30, 169.254.2.0/30, 169.254.3.0/30, 169.254.4.0/30, 169.254.5.0/30, 169.254.169.252/30. Example ["169.254.16.0/30", "169.254.15.0/30"] | list | [] | no
 
 ## Outputs
 
