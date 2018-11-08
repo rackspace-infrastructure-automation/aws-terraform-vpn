@@ -60,17 +60,19 @@ module "vpn2" {
 ##########################
 
 resource "random_string" "presharedkey1" {
-  length           = 16
-  number           = false
-  special          = true
-  override_special = "-."
+  length  = 16
+  upper   = true
+  lower   = true
+  number  = true
+  special = false
 }
 
 resource "random_string" "presharedkey2" {
-  length           = 16
-  special          = true
-  number           = false
-  override_special = "-."
+  length  = 16
+  upper   = true
+  lower   = true
+  number  = true
+  special = false
 }
 
 ############################################
