@@ -124,10 +124,12 @@ variable "bgp_inside_cidrs" {
 
 variable "use_preshared_keys" {
   description = "Range of inside IP addresses for the tunnel. Any specified CIDR blocks must be unique across all VPN connections that use the same virtual private gateway. A size /30 CIDR block from the 169.254.0.0/16 range. The following CIDR blocks are reserved and cannot be used: 169.254.0.0/30, 169.254.1.0/30, 169.254.2.0/30, 169.254.3.0/30, 169.254.4.0/30, 169.254.5.0/30, 169.254.169.252/30. Example [\"169.254.16.0/30\", \"169.254.15.0/30\"]"
+  type        = "string"
   default     = false
 }
 
 variable "use_bgp_inside_cidrs" {
   description = "Boolean value to determine if BGP Inside CIDR addresses should be used for the VPN tunnels. If custom inside CIDRs are required for this VPN this value should be set to true."
+  type        = "string"
   default     = false
 }

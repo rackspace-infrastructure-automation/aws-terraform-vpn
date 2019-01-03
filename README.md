@@ -33,6 +33,10 @@ module "vpn1" {
  route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
  route_tables_count  = 3
  vpc_id              = "${module.vpc.vpc_id}"
+ # use_preshared_keys = true
+ # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+ # bgp_inside_cidrs = true
+ # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
 }
 ```
 
@@ -75,3 +79,4 @@ Full working references are available at [examples](examples)
 |------|-------------|
 | customer\_gateway | Customer Gateway ID |
 | vpn\_gateway | VPN Gateway ID |
+
