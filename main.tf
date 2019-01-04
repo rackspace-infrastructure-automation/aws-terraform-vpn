@@ -3,7 +3,6 @@
  *
  * This module deploys the required infrastructure for a VPN to a customer's on premesis network.
  *
- *
  *## Basic Usage
  *
  *### Static Routing
