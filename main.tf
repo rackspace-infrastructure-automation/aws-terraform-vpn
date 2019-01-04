@@ -18,6 +18,8 @@
  *  static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
  *  static_routes_count = 2
  *  vpc_id              = "${module.vpc.vpc_id}"
+ *  # use_preshared_keys = true
+ *  # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
  *}
  *```
  *
@@ -33,10 +35,17 @@
  *  route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
  *  route_tables_count  = 3
  *  vpc_id              = "${module.vpc.vpc_id}"
+ *  # use_preshared_keys = true
+ *  # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+ *  # bgp_inside_cidrs = true
+ *  # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
  *}
  *```
  *
  * Full working references are available at [examples](examples)
+  * ## Limitations
+ *
+ * - When utilizing multiple keys with the `preshared_keys` variable, terraform may have issues determining which of the VPN tunnels each applies to.  This issue is outlined at https://github.com/terraform-providers/terraform-provider-aws/issues/3359.  If this issue is encountered, it is advised to discontinue use of custom preshared keys, or to only provide a single key which would be used on both tunnels.
  */
 
 locals {

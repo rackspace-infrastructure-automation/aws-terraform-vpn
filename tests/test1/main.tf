@@ -67,14 +67,6 @@ resource "random_string" "presharedkey1" {
   special = false
 }
 
-resource "random_string" "presharedkey2" {
-  length  = 16
-  upper   = true
-  lower   = true
-  number  = true
-  special = false
-}
-
 ############################################
 # Use Static Routing With PresharedKey #
 ############################################
@@ -95,7 +87,7 @@ module "vpn3" {
   static_routes       = ["192.168.12.0/23", "192.168.16.0/23"]
   static_routes_count = 2
   use_preshared_keys  = true
-  preshared_keys      = ["${random_string.presharedkey1.result}", "${random_string.presharedkey2.result}"]
+  preshared_keys      = ["${random_string.presharedkey1.result}"]
 }
 
 ##############################################
@@ -119,7 +111,7 @@ module "vpn4" {
   route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
   route_tables_count = 3
   use_preshared_keys = true
-  preshared_keys     = ["${random_string.presharedkey1.result}", "${random_string.presharedkey2.result}"]
+  preshared_keys     = ["${random_string.presharedkey1.result}"]
 }
 
 ##############################################
@@ -144,7 +136,7 @@ module "vpn5" {
   route_tables_count   = 3
   use_preshared_keys   = true
   use_bgp_inside_cidrs = true
-  preshared_keys       = ["${random_string.presharedkey1.result}", "${random_string.presharedkey2.result}"]
+  preshared_keys       = ["${random_string.presharedkey1.result}"]
   bgp_inside_cidrs     = ["169.254.16.0/30", "169.254.15.0/30"]
 }
 
@@ -195,6 +187,6 @@ module "vpn7" {
 
   use_preshared_keys   = true
   use_bgp_inside_cidrs = true
-  preshared_keys       = ["${random_string.presharedkey1.result}", "${random_string.presharedkey2.result}"]
+  preshared_keys       = ["${random_string.presharedkey1.result}"]
   bgp_inside_cidrs     = ["169.254.18.0/30", "169.254.17.0/30"]
 }
