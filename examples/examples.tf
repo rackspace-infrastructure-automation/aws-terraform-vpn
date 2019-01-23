@@ -36,7 +36,7 @@ module "sns" {
 ######################
 
 module "vpn1" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
 
   name = "StaticRoutingVPN"
 
@@ -85,7 +85,7 @@ module "vpn1" {
 ###############################
 
 module "vpn2" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
 
   name = "StaticRoutingExistingVGW"
 
@@ -107,7 +107,7 @@ module "vpn2" {
 ####################################
 
 module "vpn3" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
 
   name = "StaticRoutingExistingCGW"
 
@@ -128,7 +128,7 @@ module "vpn3" {
 ############################################
 
 module "vpn4" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
 
   name = "StaticRoutingExistingCGWandVGW"
 
@@ -151,7 +151,7 @@ module "vpn4" {
 #######################
 
 module "vpn5" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
 
   name = "DynamicRoutingVPN"
 

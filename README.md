@@ -7,7 +7,7 @@ This module deploys the required infrastructure for a VPN to a customer's on pre
 ### Static Routing
 ```
 module "vpn1" {
- source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
 
  name                = "StaticRoutingVPN"
  customer_ip         = "1.2.3.4"
@@ -61,7 +61,7 @@ Full working references are available at [examples](examples)
 | existing\_customer\_gateway | The id of an existing customer gateway to use for the VPN.  Must be provided if not creating a customer gateway. | string | `""` | no |
 | existing\_vpn\_gateway | The id of an existing VPN gateway to use for the VPN.  Must be provided if not creating a VPN gateway. | string | `""` | no |
 | name | The name prefix for these IAM resources | string | n/a | yes |
-| notification\_topic | SNS Topic ARN to use for customer notifications from CloudWatch alarms. (OPTIONAL) | string | `""` | no |
+| notification\_topic | List of SNS Topic ARNs to use for customer notifications from CloudWatch alarms. (OPTIONAL) | list | `<list>` | no |
 | preshared\_keys | The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0). | list | `<list>` | no |
 | route\_tables | A list of route tables to configure for route propagation. | list | `<list>` | no |
 | route\_tables\_count | The number of route tables to configure for route propagation. | string | `"0"` | no |
