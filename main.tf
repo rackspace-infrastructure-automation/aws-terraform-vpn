@@ -8,7 +8,7 @@
  *### Static Routing
  *```
  *module "vpn1" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
  *
  *  name                = "StaticRoutingVPN"
  *  customer_ip         = "1.2.3.4"
@@ -150,19 +150,23 @@ resource "aws_vpn_gateway_route_propagation" "route_propagation" {
   vpn_gateway_id = "${local.vpn_gateway}"
 }
 
-resource "aws_cloudwatch_metric_alarm" "vpn_status" {
-  alarm_actions       = ["${compact(list(var.notification_topic))}"]
-  alarm_description   = "${var.name}-VPN Connection State"
-  alarm_name          = "${var.name}-VPN-Status"
-  comparison_operator = "LessThanOrEqualToThreshold"
-  evaluation_periods  = "${var.alarm_evaluations}"
-  metric_name         = "TunnelState"
-  namespace           = "AWS/VPN"
-  period              = "${var.alarm_period}"
-  statistic           = "Maximum"
-  threshold           = "0"
+module "vpn_status" {
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.0.1"
 
-  dimensions {
+  alarm_description        = "${var.name}-VPN Connection State"
+  alarm_name               = "${var.name}-VPN-Status"
+  comparison_operator      = "LessThanOrEqualToThreshold"
+  customer_alarms_enabled  = true
+  evaluation_periods       = "${var.alarm_evaluations}"
+  metric_name              = "TunnelState"
+  namespace                = "AWS/VPN"
+  notification_topic       = "${var.notification_topic}"
+  period                   = "${var.alarm_period}"
+  rackspace_alarms_enabled = false
+  statistic                = "Maximum"
+  threshold                = "0"
+
+  dimensions = [{
     VpnId = "${element(concat(aws_vpn_connection.vpn_connection.*.id,aws_vpn_connection.vpn_connection_custom_presharedkey.*.id,aws_vpn_connection.vpn_connection_custom_inside_cidr.*.id,aws_vpn_connection.vpn_connection_custom_attributes.*.id, list("")), 0)}"
-  }
+  }]
 }

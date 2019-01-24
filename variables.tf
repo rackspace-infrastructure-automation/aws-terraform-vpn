@@ -64,9 +64,9 @@ variable "existing_vpn_gateway" {
 }
 
 variable "notification_topic" {
-  description = "SNS Topic ARN to use for customer notifications from CloudWatch alarms. (OPTIONAL)"
-  type        = "string"
-  default     = ""
+  description = "List of SNS Topic ARNs to use for customer notifications from CloudWatch alarms. (OPTIONAL)"
+  type        = "list"
+  default     = []
 }
 
 variable "route_tables" {
