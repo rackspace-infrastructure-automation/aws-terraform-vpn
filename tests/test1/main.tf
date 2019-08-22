@@ -19,7 +19,7 @@ module "vpc" {
 ######################
 
 module "vpn1" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "StaticRoutingVPN"
 
@@ -38,7 +38,7 @@ module "vpn1" {
 #######################
 
 module "vpn2" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "DynamicRoutingVPN"
 
@@ -72,7 +72,7 @@ resource "random_string" "presharedkey1" {
 ############################################
 
 module "vpn3" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "StaticRoutingVPN-PSK"
 
@@ -95,7 +95,7 @@ module "vpn3" {
 ##############################################
 
 module "vpn4" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "DynamicRoutingVPN-PSK"
 
@@ -119,7 +119,7 @@ module "vpn4" {
 ##############################################
 
 module "vpn5" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "DynamicRoutingVPN-PSK-ICIDR"
 
@@ -145,7 +145,7 @@ module "vpn5" {
 ##############################################
 
 module "vpn6" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "DynamicRoutingVPN-ICIDR"
 
@@ -170,7 +170,7 @@ module "vpn6" {
 ############################################
 
 module "vpn7" {
-  source = "../../module"
+  source = "../../module/modules/site"
 
   name = "StaticRoutingVPN-PSK-ICIDR"
 
