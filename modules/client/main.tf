@@ -16,7 +16,7 @@
  *  root_certificate_chain_arn = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
  *  server_certificate_arn     = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
  *  vpc_id                     = "vpc_id"
- *  
+ *
  *}
  *```
  *
@@ -28,13 +28,6 @@ locals {
     ServiceProvider = "Rackspace"
   }
 }
-
-# module "vpc" {
-#   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=v0.0.9"
-#
-#   vpc_name    = "Test1VPC"
-#   custom_tags = "${local.tags}"
-# }
 
 resource "aws_cloudwatch_log_group" "client_vpn" {
   name = "${var.name}-Client-VPN-lg"

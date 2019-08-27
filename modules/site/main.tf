@@ -8,7 +8,7 @@
  *### Static Routing
  *```
  *module "vpn1" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.3"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.0.4"
  *
  *  name                = "StaticRoutingVPN"
  *  customer_ip         = "1.2.3.4"
@@ -25,7 +25,7 @@
  *### Dynamic Routing
  *```
  *module "vpn1" {
- *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//?ref=v0.0.2"
+ *  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.0.4"v
  *
  *  name                = "DynamicRoutingVPN"
  *  bgp_asn             = 65000

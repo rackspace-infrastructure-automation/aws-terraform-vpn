@@ -3,6 +3,15 @@ provider "aws" {
   region  = "us-west-2"
 }
 
+provider "random" {
+  version = "~> 2.0"
+}
+
+resource "random_string" "cloudwatch_loggroup_rstring" {
+  length  = 8
+  special = false
+}
+
 module "vpc" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=master"
 
@@ -20,7 +29,6 @@ data "aws_acm_certificate" "cert" {
 }
 
 module "vpn1" {
-  # source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/client/?ref=v0.0.4"
   source = "../../module/modules/client"
 
   client_vpn_cidr_block      = "192.168.8.0/22"
@@ -29,4 +37,5 @@ module "vpn1" {
   root_certificate_chain_arn = "${data.aws_acm_certificate.cert.arn}"
   server_certificate_arn     = "${data.aws_acm_certificate.cert.arn}"
   vpc_id                     = "${module.vpc.vpc_id}"
+  name                       = "${random_string.cloudwatch_loggroup_rstring.result}"
 }

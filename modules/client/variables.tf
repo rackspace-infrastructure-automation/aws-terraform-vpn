@@ -1,8 +1,3 @@
-# variable "aws_account_id" {
-#   description = "AWS Account ID being worked in."
-#   type        = "string"
-# }
-
 variable "alarm_evaluations" {
   default     = 10
   description = "The number of periods over which data is evaluated to monitor VPN connection status."
