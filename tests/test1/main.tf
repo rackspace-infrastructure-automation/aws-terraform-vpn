@@ -1,5 +1,9 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
-  version = "~> 1.2"
+  version = "~> 2.2"
   region  = "us-east-1"
 }
 
@@ -11,7 +15,7 @@ provider "aws" {
 module "vpc" {
   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork//?ref=master"
 
-  vpc_name = "Test1VPC"
+  name = "Test1VPC"
 }
 
 ######################
@@ -23,10 +27,13 @@ module "vpn1" {
 
   name = "StaticRoutingVPN"
 
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
   customer_ip = "1.2.3.4"
 
-  route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count = 3
 
   static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
@@ -42,16 +49,19 @@ module "vpn2" {
 
   name = "DynamicRoutingVPN"
 
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = module.vpc.vpc_id
   create_vpn_gateway   = false
-  existing_vpn_gateway = "${module.vpn1.vpn_gateway}"
+  existing_vpn_gateway = module.vpn1.vpn_gateway
 
   customer_ip = "1.2.3.5"
 
   disable_bgp = false
   bgp_asn     = 65000
 
-  route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count = 3
 }
 
@@ -76,18 +86,21 @@ module "vpn3" {
 
   name = "StaticRoutingVPN-PSK"
 
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = module.vpc.vpc_id
   customer_ip          = "1.2.3.6"
   create_vpn_gateway   = false
-  existing_vpn_gateway = "${module.vpn1.vpn_gateway}"
+  existing_vpn_gateway = module.vpn1.vpn_gateway
 
-  route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count = 3
 
   static_routes       = ["192.168.12.0/23", "192.168.16.0/23"]
   static_routes_count = 2
   use_preshared_keys  = true
-  preshared_keys      = ["${random_string.presharedkey1.result}"]
+  preshared_keys      = [random_string.presharedkey1.result]
 }
 
 ##############################################
@@ -99,19 +112,22 @@ module "vpn4" {
 
   name = "DynamicRoutingVPN-PSK"
 
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = module.vpc.vpc_id
   create_vpn_gateway   = false
-  existing_vpn_gateway = "${module.vpn1.vpn_gateway}"
+  existing_vpn_gateway = module.vpn1.vpn_gateway
 
   customer_ip = "1.2.3.7"
 
   disable_bgp = false
   bgp_asn     = 65001
 
-  route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count = 3
   use_preshared_keys = true
-  preshared_keys     = ["${random_string.presharedkey1.result}"]
+  preshared_keys     = [random_string.presharedkey1.result]
 }
 
 ##############################################
@@ -123,20 +139,23 @@ module "vpn5" {
 
   name = "DynamicRoutingVPN-PSK-ICIDR"
 
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = module.vpc.vpc_id
   create_vpn_gateway   = false
-  existing_vpn_gateway = "${module.vpn1.vpn_gateway}"
+  existing_vpn_gateway = module.vpn1.vpn_gateway
 
   customer_ip = "1.2.3.8"
 
   disable_bgp = false
   bgp_asn     = 65002
 
-  route_tables         = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count   = 3
   use_preshared_keys   = true
   use_bgp_inside_cidrs = true
-  preshared_keys       = ["${random_string.presharedkey1.result}"]
+  preshared_keys       = [random_string.presharedkey1.result]
   bgp_inside_cidrs     = ["169.254.16.0/30", "169.254.15.0/30"]
 }
 
@@ -149,16 +168,19 @@ module "vpn6" {
 
   name = "DynamicRoutingVPN-ICIDR"
 
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = module.vpc.vpc_id
   create_vpn_gateway   = false
-  existing_vpn_gateway = "${module.vpn1.vpn_gateway}"
+  existing_vpn_gateway = module.vpn1.vpn_gateway
 
   customer_ip = "1.2.3.9"
 
   disable_bgp = false
   bgp_asn     = 65003
 
-  route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count = 3
 
   use_bgp_inside_cidrs = true
@@ -174,12 +196,15 @@ module "vpn7" {
 
   name = "StaticRoutingVPN-PSK-ICIDR"
 
-  vpc_id               = "${module.vpc.vpc_id}"
+  vpc_id               = module.vpc.vpc_id
   customer_ip          = "1.2.3.10"
   create_vpn_gateway   = false
-  existing_vpn_gateway = "${module.vpn1.vpn_gateway}"
+  existing_vpn_gateway = module.vpn1.vpn_gateway
 
-  route_tables       = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables = concat(
+    module.vpc.public_route_tables,
+    module.vpc.private_route_tables,
+  )
   route_tables_count = 3
 
   static_routes       = ["192.168.18.0/23", "192.168.20.0/23"]
@@ -187,6 +212,7 @@ module "vpn7" {
 
   use_preshared_keys   = true
   use_bgp_inside_cidrs = true
-  preshared_keys       = ["${random_string.presharedkey1.result}"]
+  preshared_keys       = [random_string.presharedkey1.result]
   bgp_inside_cidrs     = ["169.254.18.0/30", "169.254.17.0/30"]
 }
+
