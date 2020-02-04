@@ -17,7 +17,6 @@
  *   static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
  *   static_routes_count = 2
  *   vpc_id              = module.vpc.vpc_id
- *   # use_preshared_keys  = true
  *   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
  * }
  * ```
@@ -34,9 +33,7 @@
  *   route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
  *   route_tables_count  = 3
  *   vpc_id              = module.vpc.vpc_id
- *   # use_preshared_keys  = true
  *   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
- *   # bgp_inside_cidrs    = true
  *   # bgp_inside_cidrs    = ["169.254.18.0/30", "169.254.17.0/30"]
  * }
  * ```
@@ -51,7 +48,22 @@
  *
  * ## Terraform 0.12 upgrade
  *
- * There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
+ * Several resources were consolidated, taking advantage of Terraform v0.12.x features.  The following statements 
+ * can be used to update existing resources.  In each command, `<MODULE_NAME>` should be replaced with the logic 
+ * name used where the module is referenced.
+ *
+ * ```
+ * terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+ * terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection_custom_attributes[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+ * terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection_custom_inside_cidr[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+ * terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection_custom_presharedkey[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+ * ```
+ * ### Module variables
+ *
+ * The following module variables were removed as they are no longer necessary:
+ *
+ * - `use_bgp_inside_cidrs`
+ * - `use_preshared_keys`
  */
 
 terraform {
@@ -117,70 +129,13 @@ resource "aws_vpn_gateway" "vpn_gateway" {
   )
 }
 
-resource "aws_vpn_connection" "vpn_connection" {
-  count = var.use_preshared_keys == false && var.use_bgp_inside_cidrs == false ? 1 : 0
-
-  customer_gateway_id = local.customer_gateway
-  static_routes_only  = var.disable_bgp
-  type                = "ipsec.1"
-  vpn_gateway_id      = local.vpn_gateway
-
-  tags = merge(
-    var.tags,
-    local.tags,
-    {
-      "Name" = "${var.name}-VpnConnection"
-    },
-  )
-}
-
-resource "aws_vpn_connection" "vpn_connection_custom_presharedkey" {
-  count = var.use_preshared_keys && var.use_bgp_inside_cidrs == false ? 1 : 0
-
+resource "aws_vpn_connection" "vpn" {
   customer_gateway_id   = local.customer_gateway
   static_routes_only    = var.disable_bgp
-  tunnel1_preshared_key = element(var.preshared_keys, 0)
-  tunnel2_preshared_key = element(var.preshared_keys, 1)
-  type                  = "ipsec.1"
-  vpn_gateway_id        = local.vpn_gateway
-
-  tags = merge(
-    var.tags,
-    local.tags,
-    {
-      "Name" = "${var.name}-VpnConnection"
-    },
-  )
-}
-
-resource "aws_vpn_connection" "vpn_connection_custom_inside_cidr" {
-  count = var.use_preshared_keys == false && var.use_bgp_inside_cidrs ? 1 : 0
-
-  customer_gateway_id = local.customer_gateway
-  static_routes_only  = var.disable_bgp
-  tunnel1_inside_cidr = element(var.bgp_inside_cidrs, 0)
-  tunnel2_inside_cidr = element(var.bgp_inside_cidrs, 1)
-  type                = "ipsec.1"
-  vpn_gateway_id      = local.vpn_gateway
-
-  tags = merge(
-    var.tags,
-    local.tags,
-    {
-      "Name" = "${var.name}-VpnConnection"
-    },
-  )
-}
-
-resource "aws_vpn_connection" "vpn_connection_custom_attributes" {
-  count = var.use_preshared_keys && var.use_bgp_inside_cidrs ? 1 : 0
-
-  customer_gateway_id   = local.customer_gateway
-  static_routes_only    = var.disable_bgp
-  tunnel1_inside_cidr   = element(var.bgp_inside_cidrs, 0)
-  tunnel1_preshared_key = element(var.preshared_keys, 0)
-  tunnel2_inside_cidr   = element(var.bgp_inside_cidrs, 1)
-  tunnel2_preshared_key = element(var.preshared_keys, 1)
+  tunnel1_inside_cidr   = length(var.bgp_inside_cidrs) >= 2 ? element(var.bgp_inside_cidrs, 0) : null
+  tunnel1_preshared_key = length(var.preshared_keys) > 0 ? element(var.preshared_keys, 0) : null
+  tunnel2_inside_cidr   = length(var.bgp_inside_cidrs) >= 2 ? element(var.bgp_inside_cidrs, 1) : null
+  tunnel2_preshared_key = length(var.preshared_keys) > 0 ? element(var.preshared_keys, 1) : null
   type                  = "ipsec.1"
   vpn_gateway_id        = local.vpn_gateway
 
@@ -197,17 +152,7 @@ resource "aws_vpn_connection_route" "static_routes" {
   count = var.disable_bgp ? var.static_routes_count : 0
 
   destination_cidr_block = element(var.static_routes, count.index)
-
-  vpn_connection_id = element(
-    concat(
-      aws_vpn_connection.vpn_connection.*.id,
-      aws_vpn_connection.vpn_connection_custom_presharedkey.*.id,
-      aws_vpn_connection.vpn_connection_custom_inside_cidr.*.id,
-      aws_vpn_connection.vpn_connection_custom_attributes.*.id,
-      [""],
-    ),
-    0,
-  )
+  vpn_connection_id      = aws_vpn_connection.vpn.id
 }
 
 resource "aws_vpn_gateway_route_propagation" "route_propagation" {
@@ -224,6 +169,7 @@ module "vpn_status" {
   alarm_name               = "${var.name}-VPN-Status"
   comparison_operator      = "LessThanOrEqualToThreshold"
   customer_alarms_enabled  = true
+  dimensions               = [{ VpnId = aws_vpn_connection.vpn.id }]
   evaluation_periods       = var.alarm_evaluations
   metric_name              = "TunnelState"
   namespace                = "AWS/VPN"
@@ -232,20 +178,5 @@ module "vpn_status" {
   rackspace_alarms_enabled = false
   statistic                = "Maximum"
   threshold                = 0
-
-  dimensions = [
-    {
-      VpnId = element(
-        concat(
-          aws_vpn_connection.vpn_connection.*.id,
-          aws_vpn_connection.vpn_connection_custom_presharedkey.*.id,
-          aws_vpn_connection.vpn_connection_custom_inside_cidr.*.id,
-          aws_vpn_connection.vpn_connection_custom_attributes.*.id,
-          [""],
-        ),
-        0,
-      )
-    },
-  ]
 }
 

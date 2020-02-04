@@ -87,7 +87,6 @@ module "vpn3" {
   route_tables_count   = 3
   static_routes        = ["192.168.12.0/23", "192.168.16.0/23"]
   static_routes_count  = 2
-  use_preshared_keys   = true
   vpc_id               = module.vpc.vpc_id
 
   route_tables = concat(
@@ -111,7 +110,6 @@ module "vpn4" {
   name                 = "DynamicRoutingVPN-PSK"
   preshared_keys       = [random_string.presharedkey1.result]
   route_tables_count   = 3
-  use_preshared_keys   = true
   vpc_id               = module.vpc.vpc_id
 
   route_tables = concat(
@@ -136,8 +134,6 @@ module "vpn5" {
   name                 = "DynamicRoutingVPN-PSK-ICIDR"
   preshared_keys       = [random_string.presharedkey1.result]
   route_tables_count   = 3
-  use_bgp_inside_cidrs = true
-  use_preshared_keys   = true
   vpc_id               = module.vpc.vpc_id
 
   route_tables = concat(
@@ -161,7 +157,6 @@ module "vpn6" {
   existing_vpn_gateway = module.vpn1.vpn_gateway
   name                 = "DynamicRoutingVPN-ICIDR"
   route_tables_count   = 3
-  use_bgp_inside_cidrs = true
   vpc_id               = module.vpc.vpc_id
 
   route_tables = concat(
@@ -186,8 +181,6 @@ module "vpn7" {
   route_tables_count   = 3
   static_routes        = ["192.168.18.0/23", "192.168.20.0/23"]
   static_routes_count  = 2
-  use_bgp_inside_cidrs = true
-  use_preshared_keys   = true
   vpc_id               = module.vpc.vpc_id
 
   route_tables = concat(

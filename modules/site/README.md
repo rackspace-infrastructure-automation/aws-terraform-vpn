@@ -16,7 +16,6 @@ module "vpn1" {
   static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
   static_routes_count = 2
   vpc_id              = module.vpc.vpc_id
-  # use_preshared_keys  = true
   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
 }
 ```
@@ -33,9 +32,7 @@ module "vpn1" {
   route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
   route_tables_count  = 3
   vpc_id              = module.vpc.vpc_id
-  # use_preshared_keys  = true
   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
-  # bgp_inside_cidrs    = true
   # bgp_inside_cidrs    = ["169.254.18.0/30", "169.254.17.0/30"]
 }
 ```
@@ -50,7 +47,22 @@ Using [aws-terraform-cloudwatch\_alarm](https://github.com/rackspace-infrastruct
 
 ## Terraform 0.12 upgrade
 
-There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
+Several resources were consolidated, taking advantage of Terraform v0.12.x features.  The following statements  
+can be used to update existing resources.  In each command, `<MODULE_NAME>` should be replaced with the logic  
+name used where the module is referenced.
+
+```
+terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection_custom_attributes[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection_custom_inside_cidr[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+terraform state mv module.<MODULE_NAME>.aws_vpn_connection.vpn_connection_custom_presharedkey[0] module.<MODULE_NAME>.aws_vpn_connection.vpn
+```
+### Module variables
+
+The following module variables were removed as they are no longer necessary:
+
+- `use_bgp_inside_cidrs`
+- `use_preshared_keys`
 
 ## Providers
 
@@ -82,8 +94,6 @@ There should be no changes required to move from previous versions of this modul
 | static\_routes | A list of internal subnets on the customer side. The subnets must be in valid CIDR notation(x.x.x.x/x). | `list(string)` | `[]` | no |
 | static\_routes\_count | The number of internal subnets on the customer side. | `number` | `0` | no |
 | tags | Custom tags to apply to all resources. | `map(string)` | `{}` | no |
-| use\_bgp\_inside\_cidrs | Boolean value to determine if BGP Inside CIDR addresses should be used for the VPN tunnels. If custom inside CIDRs are required for this VPN this value should be set to true. | `bool` | `false` | no |
-| use\_preshared\_keys | Range of inside IP addresses for the tunnel. Any specified CIDR blocks must be unique across all VPN connections that use the same virtual private gateway. A size /30 CIDR block from the 169.254.0.0/16 range. The following CIDR blocks are reserved and cannot be used: 169.254.0.0/30, 169.254.1.0/30, 169.254.2.0/30, 169.254.3.0/30, 169.254.4.0/30, 169.254.5.0/30, 169.254.169.252/30. Example ["169.254.16.0/30", "169.254.15.0/30"] | `bool` | `false` | no |
 | vpc\_id | Provide Virtual Private Cloud ID in which the VPN resources will be deployed | `string` | n/a | yes |
 
 ## Outputs
