@@ -48,6 +48,10 @@
  * ## Other TF Modules Used
  * Using [aws-terraform-cloudwatch_alarm](https://github.com/rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm) to create the following CloudWatch Alarms:
  * 	- vpn_status
+ *
+ * ## Terraform 0.12 upgrade
+ *
+ * There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
  */
 
 terraform {

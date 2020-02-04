@@ -28,19 +28,19 @@ module "vpc" {
 
 data "aws_acm_certificate" "cert" {
   domain      = "www.mupo181ve1jco37.net"
-  statuses    = ["ISSUED"]
   most_recent = true
+  statuses    = ["ISSUED"]
 }
 
 module "vpn1" {
   source = "../../module/modules/client"
 
   client_vpn_cidr_block      = "192.168.8.0/22"
+  name                       = random_string.cloudwatch_loggroup_rstring.result
   private_subnet_count       = 1
   private_subnets            = module.vpc.private_subnets
   root_certificate_chain_arn = data.aws_acm_certificate.cert.arn
   server_certificate_arn     = data.aws_acm_certificate.cert.arn
   vpc_id                     = module.vpc.vpc_id
-  name                       = random_string.cloudwatch_loggroup_rstring.result
 }
 

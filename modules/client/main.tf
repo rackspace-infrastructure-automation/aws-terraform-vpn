@@ -20,6 +20,9 @@
  * }
  * ```
  *
+ * ## Terraform 0.12 upgrade
+ *
+ * There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
  */
 
 terraform {
