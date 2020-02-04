@@ -1,8 +1,3 @@
-variable "name" {
-  description = "The name prefix for these IAM resources"
-  type        = string
-}
-
 variable "alarm_evaluations" {
   description = "The number of periods over which data is evaluated to monitor VPN connection status."
   type        = number
@@ -19,6 +14,12 @@ variable "bgp_asn" {
   description = "An existing ASN assigned to the remote network, or one of the private ASNs in the 64512 - 65534 range.  Exceptions: 7224 cannot be used in the us-east-1 region and 9059 cannot be used in eu-west-1 region."
   type        = number
   default     = 65000
+}
+
+variable "bgp_inside_cidrs" {
+  description = "Pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0), #Always use **aws_kms_key** to manage sensitive information. Use it in conjunction with variable **preshared_keys**.  Example [\"XXXX\",\"XXXX\"]"
+  type        = list(string)
+  default     = []
 }
 
 variable "create_customer_gateway" {
@@ -63,8 +64,19 @@ variable "existing_vpn_gateway" {
   default     = ""
 }
 
+variable "name" {
+  description = "The name prefix for these IAM resources"
+  type        = string
+}
+
 variable "notification_topic" {
   description = "List of SNS Topic ARNs to use for customer notifications from CloudWatch alarms. (OPTIONAL)"
+  type        = list(string)
+  default     = []
+}
+
+variable "preshared_keys" {
+  description = "The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0)."
   type        = list(string)
   default     = []
 }
@@ -105,21 +117,10 @@ variable "tags" {
   default     = {}
 }
 
-variable "vpc_id" {
-  description = "Provide Virtual Private Cloud ID in which the VPN resources will be deployed"
-  type        = string
-}
-
-variable "preshared_keys" {
-  description = "The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0)."
-  type        = list(string)
-  default     = []
-}
-
-variable "bgp_inside_cidrs" {
-  description = "Pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway. Allowed characters are alphanumeric characters and ._. Must be between 8 and 64 characters in length and cannot start with zero (0), #Always use **aws_kms_key** to manage sensitive information. Use it in conjunction with variable **preshared_keys**.  Example [\"XXXX\",\"XXXX\"]"
-  type        = list(string)
-  default     = []
+variable "use_bgp_inside_cidrs" {
+  description = "Boolean value to determine if BGP Inside CIDR addresses should be used for the VPN tunnels. If custom inside CIDRs are required for this VPN this value should be set to true."
+  type        = bool
+  default     = false
 }
 
 variable "use_preshared_keys" {
@@ -128,9 +129,8 @@ variable "use_preshared_keys" {
   default     = false
 }
 
-variable "use_bgp_inside_cidrs" {
-  description = "Boolean value to determine if BGP Inside CIDR addresses should be used for the VPN tunnels. If custom inside CIDRs are required for this VPN this value should be set to true."
-  type        = bool
-  default     = false
+variable "vpc_id" {
+  description = "Provide Virtual Private Cloud ID in which the VPN resources will be deployed"
+  type        = string
 }
 

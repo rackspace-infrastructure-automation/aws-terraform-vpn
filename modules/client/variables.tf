@@ -1,13 +1,13 @@
 variable "alarm_evaluations" {
-  default     = 10
   description = "The number of periods over which data is evaluated to monitor VPN connection status."
   type        = number
+  default     = 10
 }
 
 variable "alarm_period" {
-  default     = 60
   description = "Time the specified statistic is applied. Must be in seconds that is also a multiple of 60."
   type        = number
+  default     = 60
 }
 
 variable "client_vpn_cidr_block" {
@@ -16,27 +16,27 @@ variable "client_vpn_cidr_block" {
 }
 
 variable "environment" {
-  default     = "development"
   description = "The name of the environment, e.g. Production, Development, etc."
   type        = string
+  default     = "development"
 }
 
 variable "name" {
-  default     = "vpn-client"
   description = "The name prefix for the VPN client resources"
   type        = string
+  default     = "vpn-client"
 }
 
 variable "notification_topic" {
-  default     = []
   description = "List of SNS Topic ARNs to use for customer notifications from CloudWatch alarms. (OPTIONAL)"
   type        = list(string)
+  default     = []
 }
 
 variable "private_subnet_count" {
-  default     = 2
   description = "Number of private subnets in the VPC"
   type        = number
+  default     = 2
 }
 
 variable "private_subnets" {
@@ -45,15 +45,15 @@ variable "private_subnets" {
 }
 
 variable "public_subnet_count" {
-  default     = 0
   description = "Number of public subnets in the VPC"
   type        = number
+  default     = 0
 }
 
 variable "public_subnets" {
-  default     = []
   description = "List of public subnets"
   type        = list(string)
+  default     = []
 }
 
 variable "root_certificate_chain_arn" {
@@ -67,9 +67,9 @@ variable "server_certificate_arn" {
 }
 
 variable "tags" {
-  default     = {}
   description = "Custom tags to apply to all resources."
   type        = map(string)
+  default     = {}
 }
 
 variable "vpc_id" {
