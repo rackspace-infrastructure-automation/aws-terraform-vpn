@@ -7,7 +7,7 @@ With Client VPN, you can access your resources from any location using an OpenVP
 ### Client VPN
 ```HCL
 module "vpn1" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/client/?ref=v0.0.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/client/?ref=v0.12.0"
 
   client_vpn_cidr_block      = "192.168.10.0/24"
   private_subnet_count       = 2

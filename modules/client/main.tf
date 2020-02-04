@@ -8,7 +8,7 @@
  * ### Client VPN
  * ```HCL
  * module "vpn1" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/client/?ref=v0.0.4"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/client/?ref=v0.12.0"
  * 
  *   client_vpn_cidr_block      = "192.168.10.0/24"
  *   private_subnet_count       = 2
@@ -39,34 +39,35 @@ locals {
 
 resource "aws_cloudwatch_log_group" "client_vpn" {
   name = "${var.name}-Client-VPN-lg"
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name" = "${var.name}-ClientVpnConnection"
     },
-    var.tags,
-    local.tags,
   )
 }
 
 resource "aws_cloudwatch_log_stream" "client_vpn" {
-  name           = "${var.name}-Client-VPN-ls"
   log_group_name = aws_cloudwatch_log_group.client_vpn.name
+  name           = "${var.name}-Client-VPN-ls"
 }
 
 resource "aws_ec2_client_vpn_endpoint" "client_vpn" {
+  client_cidr_block      = var.client_vpn_cidr_block
   description            = "Client Vpn CIDR block must not overlap users network"
   server_certificate_arn = var.server_certificate_arn
-  client_cidr_block      = var.client_vpn_cidr_block
 
   authentication_options {
-    type                       = "certificate-authentication"
     root_certificate_chain_arn = var.root_certificate_chain_arn
+    type                       = "certificate-authentication"
   }
 
   connection_log_options {
-    enabled               = true
     cloudwatch_log_group  = aws_cloudwatch_log_group.client_vpn.name
     cloudwatch_log_stream = aws_cloudwatch_log_stream.client_vpn.name
+    enabled               = true
   }
 }
 
@@ -84,7 +85,7 @@ module "client_vpn_status" {
   period                   = var.alarm_period
   rackspace_alarms_enabled = false
   statistic                = "Maximum"
-  threshold                = "0"
+  threshold                = 0
 
   dimensions = [
     {
@@ -108,26 +109,22 @@ resource "aws_ec2_client_vpn_network_association" "public" {
 }
 
 resource "aws_security_group" "client_vpn_security_group" {
-  name_prefix = "${var.name}-ClientVpnSecurityGroup"
   description = "Client VPN Security Group"
+  name_prefix = "${var.name}-ClientVpnSecurityGroup"
   vpc_id      = var.vpc_id
 
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
   }
 
-  lifecycle {
-    create_before_destroy = true
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    protocol    = "tcp"
+    to_port     = 0
   }
 
   tags = merge(
@@ -136,5 +133,9 @@ resource "aws_security_group" "client_vpn_security_group" {
       "Name" = "${var.name}-ClientVpnSecurityGroup"
     },
   )
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 

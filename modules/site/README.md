@@ -7,36 +7,36 @@ This module deploys the required infrastructure for a VPN to a customer's on-pre
 ### Static Routing
 ```
 module "vpn1" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.0.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.12.0"
 
   name                = "StaticRoutingVPN"
   customer_ip         = "1.2.3.4"
-  route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
   route_tables_count  = 3
   static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
   static_routes_count = 2
-  vpc_id              = "${module.vpc.vpc_id}"
-  # use_preshared_keys = true
-  # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+  vpc_id              = module.vpc.vpc_id
+  # use_preshared_keys  = true
+  # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
 }
 ```
 
 ### Dynamic Routing
 ```
 module "vpn1" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.0.4"v
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.12.0"
 
   name                = "DynamicRoutingVPN"
   bgp_asn             = 65000
   customer_ip         = "1.2.3.4"
   disable_bgp         = false
-  route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+  route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
   route_tables_count  = 3
-  vpc_id              = "${module.vpc.vpc_id}"
-  # use_preshared_keys = true
-  # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
-  # bgp_inside_cidrs = true
-  # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
+  vpc_id              = module.vpc.vpc_id
+  # use_preshared_keys  = true
+  # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+  # bgp_inside_cidrs    = true
+  # bgp_inside_cidrs    = ["169.254.18.0/30", "169.254.17.0/30"]
 }
 ```
 

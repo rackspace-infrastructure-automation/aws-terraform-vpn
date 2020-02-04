@@ -8,36 +8,36 @@
  * ### Static Routing
  * ```
  * module "vpn1" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.0.4"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.12.0"
  * 
  *   name                = "StaticRoutingVPN"
  *   customer_ip         = "1.2.3.4"
- *   route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+ *   route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
  *   route_tables_count  = 3
  *   static_routes       = ["192.168.0.0/23", "192.168.4.0/23"]
  *   static_routes_count = 2
- *   vpc_id              = "${module.vpc.vpc_id}"
- *   # use_preshared_keys = true
- *   # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+ *   vpc_id              = module.vpc.vpc_id
+ *   # use_preshared_keys  = true
+ *   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
  * }
  * ```
  * 
  * ### Dynamic Routing
  * ```
  * module "vpn1" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.0.4"v
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.12.0"
  * 
  *   name                = "DynamicRoutingVPN"
  *   bgp_asn             = 65000
  *   customer_ip         = "1.2.3.4"
  *   disable_bgp         = false
- *   route_tables        = "${concat(module.vpc.public_route_tables, module.vpc.private_route_tables)}"
+ *   route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
  *   route_tables_count  = 3
- *   vpc_id              = "${module.vpc.vpc_id}"
- *   # use_preshared_keys = true
- *   # preshared_keys   = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
- *   # bgp_inside_cidrs = true
- *   # bgp_inside_cidrs = ["169.254.18.0/30", "169.254.17.0/30"]
+ *   vpc_id              = module.vpc.vpc_id
+ *   # use_preshared_keys  = true
+ *   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information: More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
+ *   # bgp_inside_cidrs    = true
+ *   # bgp_inside_cidrs    = ["169.254.18.0/30", "169.254.17.0/30"]
  * }
  * ```
  *
@@ -58,11 +58,10 @@ terraform {
   }
 }
 
-
 locals {
   tags = {
-    ServiceProvider = "Rackspace"
     Environment     = var.environment
+    ServiceProvider = "Rackspace"
   }
 
   customer_gateway = element(
@@ -89,102 +88,112 @@ resource "aws_customer_gateway" "customer_gateway" {
   bgp_asn    = var.bgp_asn
   ip_address = var.customer_ip
   type       = "ipsec.1"
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name" = "${var.name}-CustomerGateway"
     },
-    var.tags,
-    local.tags,
   )
 }
 
 resource "aws_vpn_gateway" "vpn_gateway" {
   count = var.create_vpn_gateway ? 1 : 0
 
+  vpc_id = var.vpc_id
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name"             = "${var.name}-VPNGateway"
       "transitvpc:spoke" = var.spoke_vpc ? "True" : "False"
     },
-    var.tags,
-    local.tags,
   )
-
-  vpc_id = var.vpc_id
 }
 
 resource "aws_vpn_connection" "vpn_connection" {
-  count               = false == var.use_preshared_keys && false == var.use_bgp_inside_cidrs ? 1 : 0
+  count = var.use_preshared_keys == false && var.use_bgp_inside_cidrs == false ? 1 : 0
+
   customer_gateway_id = local.customer_gateway
   static_routes_only  = var.disable_bgp
+  type                = "ipsec.1"
+  vpn_gateway_id      = local.vpn_gateway
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name" = "${var.name}-VpnConnection"
     },
-    var.tags,
-    local.tags,
   )
-  type           = "ipsec.1"
-  vpn_gateway_id = local.vpn_gateway
 }
 
 resource "aws_vpn_connection" "vpn_connection_custom_presharedkey" {
-  count               = var.use_preshared_keys && false == var.use_bgp_inside_cidrs ? 1 : 0
-  customer_gateway_id = local.customer_gateway
-  static_routes_only  = var.disable_bgp
+  count = var.use_preshared_keys && var.use_bgp_inside_cidrs == false ? 1 : 0
+
+  customer_gateway_id   = local.customer_gateway
+  static_routes_only    = var.disable_bgp
+  tunnel1_preshared_key = element(var.preshared_keys, 0)
+  tunnel2_preshared_key = element(var.preshared_keys, 1)
+  type                  = "ipsec.1"
+  vpn_gateway_id        = local.vpn_gateway
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name" = "${var.name}-VpnConnection"
     },
-    var.tags,
-    local.tags,
   )
-  type                  = "ipsec.1"
-  vpn_gateway_id        = local.vpn_gateway
-  tunnel1_preshared_key = element(var.preshared_keys, 0)
-  tunnel2_preshared_key = element(var.preshared_keys, 1)
 }
 
 resource "aws_vpn_connection" "vpn_connection_custom_inside_cidr" {
-  count               = false == var.use_preshared_keys && var.use_bgp_inside_cidrs ? 1 : 0
+  count = var.use_preshared_keys == false && var.use_bgp_inside_cidrs ? 1 : 0
+
   customer_gateway_id = local.customer_gateway
   static_routes_only  = var.disable_bgp
+  tunnel1_inside_cidr = element(var.bgp_inside_cidrs, 0)
+  tunnel2_inside_cidr = element(var.bgp_inside_cidrs, 1)
+  type                = "ipsec.1"
+  vpn_gateway_id      = local.vpn_gateway
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name" = "${var.name}-VpnConnection"
     },
-    var.tags,
-    local.tags,
   )
-  type                = "ipsec.1"
-  vpn_gateway_id      = local.vpn_gateway
-  tunnel1_inside_cidr = element(var.bgp_inside_cidrs, 0)
-  tunnel2_inside_cidr = element(var.bgp_inside_cidrs, 1)
 }
 
 resource "aws_vpn_connection" "vpn_connection_custom_attributes" {
-  count               = var.use_preshared_keys && var.use_bgp_inside_cidrs ? 1 : 0
-  customer_gateway_id = local.customer_gateway
-  static_routes_only  = var.disable_bgp
+  count = var.use_preshared_keys && var.use_bgp_inside_cidrs ? 1 : 0
+
+  customer_gateway_id   = local.customer_gateway
+  static_routes_only    = var.disable_bgp
+  tunnel1_inside_cidr   = element(var.bgp_inside_cidrs, 0)
+  tunnel1_preshared_key = element(var.preshared_keys, 0)
+  tunnel2_inside_cidr   = element(var.bgp_inside_cidrs, 1)
+  tunnel2_preshared_key = element(var.preshared_keys, 1)
+  type                  = "ipsec.1"
+  vpn_gateway_id        = local.vpn_gateway
+
   tags = merge(
+    var.tags,
+    local.tags,
     {
       "Name" = "${var.name}-VpnConnection"
     },
-    var.tags,
-    local.tags,
   )
-  type                  = "ipsec.1"
-  vpn_gateway_id        = local.vpn_gateway
-  tunnel1_preshared_key = element(var.preshared_keys, 0)
-  tunnel2_preshared_key = element(var.preshared_keys, 1)
-  tunnel1_inside_cidr   = element(var.bgp_inside_cidrs, 0)
-  tunnel2_inside_cidr   = element(var.bgp_inside_cidrs, 1)
 }
 
 resource "aws_vpn_connection_route" "static_routes" {
   count = var.disable_bgp ? var.static_routes_count : 0
 
   destination_cidr_block = element(var.static_routes, count.index)
+
   vpn_connection_id = element(
     concat(
       aws_vpn_connection.vpn_connection.*.id,
@@ -218,7 +227,7 @@ module "vpn_status" {
   period                   = var.alarm_period
   rackspace_alarms_enabled = false
   statistic                = "Maximum"
-  threshold                = "0"
+  threshold                = 0
 
   dimensions = [
     {
