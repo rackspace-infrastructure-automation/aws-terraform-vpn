@@ -66,6 +66,12 @@ variable "server_certificate_arn" {
   type        = string
 }
 
+variable "split_tunnel" {
+  description = "Enables/disables split tunnel on the Client VPN."
+  type        = bool
+  default     = false
+}
+
 variable "tags" {
   description = "Custom tags to apply to all resources."
   type        = map(string)
@@ -76,4 +82,3 @@ variable "vpc_id" {
   description = "VPC ID"
   type        = string
 }
-

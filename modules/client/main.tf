@@ -15,6 +15,7 @@
  *   private_subnets            = [subnet_1, subnet_2]
  *   root_certificate_chain_arn = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
  *   server_certificate_arn     = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ *   split_tunnel               = false
  *   vpc_id                     = "vpc_id"
  * 
  * }
@@ -61,6 +62,7 @@ resource "aws_ec2_client_vpn_endpoint" "client_vpn" {
   client_cidr_block      = var.client_vpn_cidr_block
   description            = "Client Vpn CIDR block must not overlap users network"
   server_certificate_arn = var.server_certificate_arn
+  split_tunnel           = var.split_tunnel
 
   authentication_options {
     root_certificate_chain_arn = var.root_certificate_chain_arn
