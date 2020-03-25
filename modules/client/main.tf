@@ -15,6 +15,7 @@
  *   private_subnets            = [subnet_1, subnet_2]
  *   root_certificate_chain_arn = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
  *   server_certificate_arn     = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ *   split_tunnel               = false
  *   vpc_id                     = "vpc_id"
  * 
  * }

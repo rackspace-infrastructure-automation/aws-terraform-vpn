@@ -68,8 +68,8 @@ variable "server_certificate_arn" {
 
 variable "split_tunnel" {
   description = "Enables/disables split tunnel on the Client VPN."
-  type        = string
-  default     = "false"
+  type        = bool
+  default     = false
 }
 
 variable "tags" {
