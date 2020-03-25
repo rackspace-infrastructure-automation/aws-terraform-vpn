@@ -14,6 +14,7 @@ module "vpn1" {
   private_subnets            = [subnet_1, subnet_2]
   root_certificate_chain_arn = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   server_certificate_arn     = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  split_tunnel               = "false"
   vpc_id                     = "vpc_id"
 
 }
@@ -45,6 +46,7 @@ There should be no changes required to move from previous versions of this modul
 | public\_subnets | List of public subnets | `list(string)` | `[]` | no |
 | root\_certificate\_chain\_arn | The ARN of the client certificate. The certificate must be signed by a certificate authority (CA) and it must be provisioned in AWS Certificate Manager (ACM). | `string` | n/a | yes |
 | server\_certificate\_arn | The server certificate ARN. | `string` | n/a | yes |
+| split\_tunnel | Enables/disables split tunnel on the Client VPN. | `string` | `"false"` | yes |
 | tags | Custom tags to apply to all resources. | `map(string)` | `{}` | no |
 | vpc\_id | VPC ID | `string` | n/a | yes |
 
