@@ -77,3 +77,8 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "split_tunnel" {
+  description = "Enables/disables split tunnel on the Client VPN"
+  type        = string
+  default     = "false"
+}
