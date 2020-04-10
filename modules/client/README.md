@@ -28,7 +28,7 @@ There should be no changes required to move from previous versions of this modul
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.1.0 |
+| aws | >= 2.7.0 |
 
 ## Inputs
 
