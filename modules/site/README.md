@@ -68,7 +68,7 @@ The following module variables were removed as they are no longer necessary:
 
 | Name | Version |
 |------|---------|
-| aws | >= 2.1.0 |
+| aws | >= 2.7.0 |
 
 ## Inputs
 
