@@ -4,12 +4,12 @@
  * This module deploys the required infrastructure for a VPN to a customer's on-premise network.
  *
  * ## Basic Usage
- * 
+ *
  * ### Static Routing
  * ```
  * module "vpn1" {
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.12.0"
- * 
+ *
  *   name                = "StaticRoutingVPN"
  *   customer_ip         = "1.2.3.4"
  *   route_tables        = concat(module.vpc.public_route_tables, module.vpc.private_route_tables)
@@ -20,12 +20,12 @@
  *   # preshared_keys      = ["XXXXXXXXXXXXX1", "XXXXXXXXXXXXX2"] #Always use aws_kms_secrets to manage sensitive information. More info: https://manage.rackspace.com/aws/docs/product-guide/iac_beta/managing-secrets.html
  * }
  * ```
- * 
+ *
  * ### Dynamic Routing
  * ```
  * module "vpn1" {
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/site/?ref=v0.12.0"
- * 
+ *
  *   name                = "DynamicRoutingVPN"
  *   bgp_asn             = 65000
  *   customer_ip         = "1.2.3.4"
@@ -48,8 +48,8 @@
  *
  * ## Terraform 0.12 upgrade
  *
- * Several resources were consolidated, taking advantage of Terraform v0.12.x features.  The following statements 
- * can be used to update existing resources.  In each command, `<MODULE_NAME>` should be replaced with the logic 
+ * Several resources were consolidated, taking advantage of Terraform v0.12.x features.  The following statements
+ * can be used to update existing resources.  In each command, `<MODULE_NAME>` should be replaced with the logic
  * name used where the module is referenced.
  *
  * ```
@@ -163,7 +163,7 @@ resource "aws_vpn_gateway_route_propagation" "route_propagation" {
 }
 
 module "vpn_status" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.0"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.4"
 
   alarm_description        = "${var.name}-VPN Connection State"
   alarm_name               = "${var.name}-VPN-Status"
