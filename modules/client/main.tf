@@ -4,12 +4,12 @@
  * With Client VPN, you can access your resources from any location using an OpenVPN-based VPN client.
  *
  * ## Basic Usage
- * 
+ *
  * ### Client VPN
  * ```HCL
  * module "vpn1" {
  *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpn//modules/client/?ref=v0.12.0"
- * 
+ *
  *   client_vpn_cidr_block      = "192.168.10.0/24"
  *   private_subnet_count       = 2
  *   private_subnets            = [subnet_1, subnet_2]
@@ -17,7 +17,7 @@
  *   server_certificate_arn     = "arn:aws:acm:REGION:AWS_ACCOUNT:certificate/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
  *   split_tunnel               = false
  *   vpc_id                     = "vpc_id"
- * 
+ *
  * }
  * ```
  *
@@ -77,7 +77,7 @@ resource "aws_ec2_client_vpn_endpoint" "client_vpn" {
 }
 
 module "client_vpn_status" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.0"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.4"
 
   alarm_description        = "${var.name}-VPN Connection State"
   alarm_name               = "${var.name}-VPN-Status"
