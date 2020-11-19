@@ -3,14 +3,14 @@ terraform {
 }
 
 provider "aws" {
-  version = "~> 2.7"
+  version = "~> 3.0"
   region  = "us-east-1"
 }
 
 provider "aws" {
   alias   = "oregon"
   region  = "us-west-2"
-  version = "~> 2.7"
+  version = "~> 3.0"
 }
 
 module "vpc" {
@@ -84,7 +84,7 @@ module "vpn3" {
   customer_ip          = "1.2.3.6"
   existing_vpn_gateway = module.vpn1.vpn_gateway
   name                 = "StaticRoutingVPN-PSK"
-  preshared_keys       = [random_string.presharedkey1.result]
+  preshared_keys       = ["pkey${random_string.presharedkey1.result}"]
   route_tables_count   = 3
   static_routes        = ["192.168.12.0/23", "192.168.16.0/23"]
   static_routes_count  = 2
@@ -133,7 +133,7 @@ module "vpn5" {
   disable_bgp          = false
   existing_vpn_gateway = module.vpn1.vpn_gateway
   name                 = "DynamicRoutingVPN-PSK-ICIDR"
-  preshared_keys       = [random_string.presharedkey1.result]
+  preshared_keys       = ["pkey${random_string.presharedkey1.result}"]
   route_tables_count   = 3
   vpc_id               = module.vpc.vpc_id
 
@@ -178,7 +178,7 @@ module "vpn7" {
   customer_ip          = "1.2.3.10"
   existing_vpn_gateway = module.vpn1.vpn_gateway
   name                 = "StaticRoutingVPN-PSK-ICIDR"
-  preshared_keys       = [random_string.presharedkey1.result]
+  preshared_keys       = ["pkey${random_string.presharedkey1.result}"]
   route_tables_count   = 3
   static_routes        = ["192.168.18.0/23", "192.168.20.0/23"]
   static_routes_count  = 2
