@@ -24,16 +24,39 @@ module "vpn1" {
 
 There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| aws | >= 2.7.0 |
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | aws | >= 2.7.0 |
 
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| client_vpn_status | git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.6 |  |
+
+## Resources
+
+| Name |
+|------|
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/cloudwatch_log_group) |
+| [aws_cloudwatch_log_stream](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/cloudwatch_log_stream) |
+| [aws_ec2_client_vpn_endpoint](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/ec2_client_vpn_endpoint) |
+| [aws_ec2_client_vpn_network_association](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/ec2_client_vpn_network_association) |
+| [aws_security_group](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/security_group) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | alarm\_evaluations | The number of periods over which data is evaluated to monitor VPN connection status. | `number` | `10` | no |
 | alarm\_period | Time the specified statistic is applied. Must be in seconds that is also a multiple of 60. | `number` | `60` | no |
 | client\_vpn\_cidr\_block | Add the IPv4 address range, in CIDR notation, from which to assign client IP Address must be either /16 or /22 address space | `string` | n/a | yes |
@@ -56,4 +79,3 @@ There should be no changes required to move from previous versions of this modul
 |------|-------------|
 | aws\_ec2\_client\_vpn\_endpoint\_dns | client vpn end point DNS |
 | aws\_ec2\_client\_vpn\_endpoint\_id | client vpn end point id |
-

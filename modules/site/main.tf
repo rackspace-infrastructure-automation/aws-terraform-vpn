@@ -163,7 +163,7 @@ resource "aws_vpn_gateway_route_propagation" "route_propagation" {
 }
 
 module "vpn_status" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.6"
 
   alarm_description        = "${var.name}-VPN Connection State"
   alarm_name               = "${var.name}-VPN-Status"

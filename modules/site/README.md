@@ -64,16 +64,39 @@ The following module variables were removed as they are no longer necessary:
 - `use_bgp_inside_cidrs`
 - `use_preshared_keys`
 
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| aws | >= 2.7.0 |
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | aws | >= 2.7.0 |
 
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| vpn_status | git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.6 |  |
+
+## Resources
+
+| Name |
+|------|
+| [aws_customer_gateway](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/customer_gateway) |
+| [aws_vpn_connection](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpn_connection) |
+| [aws_vpn_connection_route](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpn_connection_route) |
+| [aws_vpn_gateway](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpn_gateway) |
+| [aws_vpn_gateway_route_propagation](https://registry.terraform.io/providers/hashicorp/aws/2.7.0/docs/resources/vpn_gateway_route_propagation) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | alarm\_evaluations | The number of periods over which data is evaluated to monitor VPN connection status. | `number` | `10` | no |
 | alarm\_period | Time the specified statistic is applied. Must be in seconds that is also a multiple of 60. | `number` | `60` | no |
 | bgp\_asn | An existing ASN assigned to the remote network, or one of the private ASNs in the 64512 - 65534 range.  Exceptions: 7224 cannot be used in the us-east-1 region and 9059 cannot be used in eu-west-1 region. | `number` | `65000` | no |
@@ -102,4 +125,3 @@ The following module variables were removed as they are no longer necessary:
 |------|-------------|
 | customer\_gateway | Customer Gateway ID |
 | vpn\_gateway | VPN Gateway ID |
-
