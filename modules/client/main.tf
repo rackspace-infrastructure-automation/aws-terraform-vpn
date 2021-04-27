@@ -77,7 +77,7 @@ resource "aws_ec2_client_vpn_endpoint" "client_vpn" {
 }
 
 module "client_vpn_status" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.4"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-cloudwatch_alarm//?ref=v0.12.6"
 
   alarm_description        = "${var.name}-VPN Connection State"
   alarm_name               = "${var.name}-VPN-Status"
