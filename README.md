@@ -1,7 +1,23 @@
-# aws-terraform-vpn
+## Requirements
 
-This repository contains several terraform modules that can be used to deploy various vpn resources, such as a client vpn and site to site vpn.
+No requirements.
 
-## Module listing
-- [client](./modules/client/) - A terraform module that creates a client to site vpn.
-- [site](./modules/site/) - A terraform module that creates a site to site vpn.
+## Providers
+
+No provider.
+
+## Modules
+
+No Modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No input.
+
+## Outputs
+
+No output.
